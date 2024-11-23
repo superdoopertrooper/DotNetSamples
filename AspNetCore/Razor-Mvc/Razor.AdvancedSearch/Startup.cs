@@ -17,113 +17,115 @@ using Microsoft.Data.Sqlite;
 
 namespace EqDemo
 {
+	public class Startup
+	{
+		public Startup(IConfiguration configuration)
+		{
+			Configuration = configuration;
 
-    public class Startup
-    {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
+			DbConnectionString = Configuration.GetConnectionString("EqDemoDb");
 
-            DbConnectionString = Configuration.GetConnectionString("EqDemoDb");            
+			Korzh.EasyQuery.RazorUI.Pages.AdvancedSearch.ExportFormats = new string[] { "pdf", "excel", "excel-html", "csv" };
 
-            Korzh.EasyQuery.RazorUI.Pages.AdvancedSearch.ExportFormats = new string[] { "pdf", "excel", "excel-html", "csv" };
-            
-            //uncomment the following line if you want to show the SQL statements on each change in your query
-            //Korzh.EasyQuery.RazorUI.Pages.AdvancedSearch.ShowSqlPanel = true;
-        }
+			//uncomment the following line if you want to show the SQL statements on each change in your query
+			//Korzh.EasyQuery.RazorUI.Pages.AdvancedSearch.ShowSqlPanel = true;
+		}
 
-        public IConfiguration Configuration { get; }
+		public IConfiguration Configuration { get; }
 
-        public string DbConnectionString { get; }
+		public string DbConnectionString { get; }
 
-        
+		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+		{
+			if (env.IsDevelopment())
+			{
+				app.UseDeveloperExceptionPage();
+				app.UseMigrationsEndPoint();
+			}
+			else
+			{
+				app.UseExceptionHandler("/Error");
+				// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+				app.UseHsts();
+			}
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {          
-            services.AddDbContext<AppDbContext>(
-                options => options.UseSqlite(DbConnectionString)
-                //options => options.UseSqlServer(DbConnectionString);
-            );
-       
-            services.AddDistributedMemoryCache();
-            services.AddSession();
+			app.UseHttpsRedirection();
+			app.UseStaticFiles();
 
-            services.AddEasyQuery()
-                    .UseSqlManager()
-                    .AddDefaultExporters()
-                    .AddDataExporter<PdfDataExporter>("pdf")
-                    .AddDataExporter<ExcelDataExporter>("excel")
-                    .UseSessionCache()
-                    .RegisterDbGate<Korzh.EasyQuery.DbGates.SqLiteGate>();
-                    //.RegisterDbGate<Korzh.EasyQuery.DbGates.SqlServerGate>();
+			app.UseRouting();
 
-            services.AddRazorPages();
+			app.UseAuthentication();
+			app.UseAuthorization();
 
-            //to support non-Unicode code pages in PDF Exporter
-            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-        }
+			app.UseSession();
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment()) {
-                app.UseDeveloperExceptionPage();
-                app.UseMigrationsEndPoint();
-            }
-            else {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+			app.UseEndpoints(endpoints =>
+			{
+				endpoints.MapEasyQuery(options =>
+				{
+					options.DefaultModelId = "nwind";
+					options.BuildQueryOnSync = true;
+					options.SaveNewQuery = false;
+					options.ConnectionString = DbConnectionString;
+					options.UseDbContext<AppDbContext>();
+					options.StoreModelInCache = true;
+					options.StoreQueryInCache = true;
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
+					// If you want to load model directly from DB metadata
+					// remove (or comment) options.UseDbContext(...) call and uncomment the next 3 lines of code
+					//options.ConnectionString = Configuration.GetConnectionString("EqDemoDb");
+					//options.UseDbConnection<Microsoft.Data.SqlClient.SqlConnection>();
+					//options.UseDbConnectionModelLoader();
 
-            app.UseRouting();
+					options.UseQueryStore((_) => new FileQueryStore("App_Data"));
 
-            app.UseAuthentication();
-            app.UseAuthorization();
+					options.UseModelTuner(manager =>
+					{
+						var attr = manager.Model.FindEntityAttr("Order.ShipRegion");
+						attr.Operations.RemoveByIDs(manager.Model, "StartsWith,Contains");
+						attr.DefaultEditor = new CustomListValueEditor("Lookup", "Lookup");
+					});
 
-            app.UseSession();
+					options.UseSqlFormats(FormatType.Sqlite, formats =>
+					{
+						formats.UseDbName = false;
+						formats.UseSchema = false;
+					});
+				});
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapEasyQuery(options => {
-                    options.DefaultModelId = "nwind";
-                    options.BuildQueryOnSync = true;
-                    options.SaveNewQuery = false;
-                    options.ConnectionString = DbConnectionString;
-                    options.UseDbContext<AppDbContext>();
-                    options.StoreModelInCache = true;
-                    options.StoreQueryInCache = true;
+				endpoints.MapRazorPages();
+				endpoints.MapControllers();
+			});
 
-                    // If you want to load model directly from DB metadata
-                    // remove (or comment) options.UseDbContext(...) call and uncomment the next 3 lines of code
-                    //options.ConnectionString = Configuration.GetConnectionString("EqDemoDb");
-                    //options.UseDbConnection<Microsoft.Data.SqlClient.SqlConnection>();
-                    //options.UseDbConnectionModelLoader();
+			//Init demo database (if necessary)
+			app.EnsureDbInitialized(DbConnectionString, env);
+		}
 
-                    options.UseQueryStore((_) => new FileQueryStore("App_Data"));
+		// This method gets called by the runtime. Use this method to add services to the container.
+		public void ConfigureServices(IServiceCollection services)
+		{
+			services.AddDbContext<AppDbContext>(
+				options => options.UseSqlite(DbConnectionString)
+			//options => options.UseSqlServer(DbConnectionString);
+			);
 
-                    options.UseModelTuner(manager => {
-                        var attr = manager.Model.FindEntityAttr("Order.ShipRegion");
-                        attr.Operations.RemoveByIDs(manager.Model, "StartsWith,Contains");
-                        attr.DefaultEditor = new CustomListValueEditor("Lookup", "Lookup");
-                    });
+			services.AddDistributedMemoryCache();
+			services.AddSession();
 
-                    options.UseSqlFormats(FormatType.Sqlite, formats => {
-                        formats.UseDbName = false;
-                        formats.UseSchema = false;
-                    });
-                });
+			services.AddEasyQuery()
+					.UseSqlManager()
+					.AddDefaultExporters()
+					.AddDataExporter<PdfDataExporter>("pdf")
+					.AddDataExporter<ExcelDataExporter>("excel")
+					.UseSessionCache()
+					.RegisterDbGate<Korzh.EasyQuery.DbGates.SqLiteGate>();
+			//.RegisterDbGate<Korzh.EasyQuery.DbGates.SqlServerGate>();
 
-                endpoints.MapRazorPages();
-                endpoints.MapControllers();
-            });
+			services.AddRazorPages();
 
-            //Init demo database (if necessary)
-            app.EnsureDbInitialized(DbConnectionString, env);
-        }
-    }
+			//to support non-Unicode code pages in PDF Exporter
+			System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+		}
+	}
 }

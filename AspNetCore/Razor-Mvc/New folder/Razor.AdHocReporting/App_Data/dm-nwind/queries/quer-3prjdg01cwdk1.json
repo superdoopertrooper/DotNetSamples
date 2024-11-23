@@ -1,0 +1,1 @@
+﻿{"id":"quer-3prjdg01cwdk1","modelId":"nwind","name":"[New query]1","cols":[{"id":"col-c2xjdfzzboze6","cptn":"Category Category Name","srt":0,"expr":{"tag":2,"dtype":1,"kind":2,"val":"Category.CategoryName"}}],"justsortcols":[],"root":{"linking":3,"conds":[]},"extraData":{},"innerData":{"aggr":{"groups":[],"ugt":false,"urc":false,"csg":false,"aggregates":[],"enabled":false}}}
