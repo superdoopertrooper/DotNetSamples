@@ -1,0 +1,49 @@
+﻿CustomSearch
+
+@section Styles {
+	<link rel="stylesheet" href="https://cdn.korzh.com/eq/6.0.9/eq.core.min.css">
+	<link rel="stylesheet" href="https://cdn.korzh.com/eq/6.0.9/eq.view.min.css">
+}
+
+<partial name="EasyQuery/_AdvancedSearch" />
+
+@section Scripts {
+	<!-- EasyQuery script -->
+	<script src="https://cdn.korzh.com/eq/6.0.9/eq.enterprise.min.js"></script>
+
+	<!-- EasyQuery view initialization -->
+	<script>
+		document.addEventListener('load', () => {
+			//Options for AdvancedSearchView
+			var options = {
+				//the base URL where all requests are sent to
+				endpoint: '/api/easyquery',
+				widgets: {
+					entitiesPanel: {
+						//EntityiesPanel options
+						showCheckboxes: true
+					},
+					columnsPanel: {
+						//ColumnsPanel options
+					},
+					queryPanel: {
+						//Querypanel options
+					},
+				},
+				result: {
+					//Don't show EasyChart
+					showChart: false,
+				},
+			};
+
+			var view = new easyquery.ui.AdvancedSearchView();
+			window['AdvancedSearchView'] = view; //to make possible to access it later
+
+			//The following line is necessary when you use Enterprise edition of EasyQuery.JS
+			//You don't need it if you included the Community (free) edition.
+			//You can get the trial license key at  https://korzh.com/easyquery#get-started
+			view.getContext().useEnterprise("LsfCXckwGAS_VmWlhlH2ROnIzRK1Y0AQSN7F6KSH2YEBNJ4FG95VKEW");
+			view.init(options);
+		});
+	</script>
+}
