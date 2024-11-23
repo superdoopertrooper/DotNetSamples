@@ -45,6 +45,7 @@ app.UseEasyQuery(
 		 // options.UseDbConnectionModelLoader();
 		 //add dbgate for SQL Server
 
+		 options.Endpoint = "/api/easyquery";
 		 options.UseDbContext<AppDbContext>();
 		 options.StoreModelInCache = false;
 		 options.StoreQueryInCache = false;
