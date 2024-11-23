@@ -7,19 +7,31 @@ using System.Threading.Tasks;
 
 namespace EqDemo.Models
 {
-    public class Category
-    {
+	public class Asin
+	{
+		public string AsinName { get; set; }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        [Column("CategoryID")]
-        public int Id { get; set; }
+		public string Description { get; set; }
 
-        public string CategoryName { get; set; }
+		[DatabaseGenerated(DatabaseGeneratedOption.None)]
+		[Column("AsinID")]
+		public int Id { get; set; }
 
-        public string Description { get; set; }
+		[ScaffoldColumn(false)]
+		public byte[] Picture { get; set; }
+	}
 
-        [ScaffoldColumn(false)]
-        public byte[] Picture { get; set; } 
+	public class Category
+	{
+		public string CategoryName { get; set; }
 
-    }
+		public string Description { get; set; }
+
+		[DatabaseGenerated(DatabaseGeneratedOption.None)]
+		[Column("CategoryID")]
+		public int Id { get; set; }
+
+		[ScaffoldColumn(false)]
+		public byte[] Picture { get; set; }
+	}
 }
