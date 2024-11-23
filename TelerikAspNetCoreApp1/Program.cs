@@ -14,7 +14,8 @@ Korzh.EasyQuery.AspNetCore.JSLicense.Key = "LsfCXckwGAS_VmWlhlH2ROnIzRK1Y0AQSN7F
 
 builder.Services.AddDbContext<AppDbContext>(
 			//	options => options.UseSqlite(DbConnectionString)
-			options => options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=northwind")
+			//options => options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=northwind")
+			options => options.UseSqlServer(builder.Configuration.GetConnectionString("EqDemoDb"))
 			);
 
 // Add services to the container.
