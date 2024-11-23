@@ -63,8 +63,10 @@ namespace EqDemo
 					options.SaveNewQuery = false;
 					options.ConnectionString = DbConnectionString;
 					options.UseDbContext<AppDbContext>();
-					options.StoreModelInCache = true;
-					options.StoreQueryInCache = true;
+					//options.StoreModelInCache = true;
+					options.StoreModelInCache = false;
+					//options.StoreQueryInCache = true;
+					options.StoreQueryInCache = false;
 
 					// If you want to load model directly from DB metadata
 					// remove (or comment) options.UseDbContext(...) call and uncomment the next 3 lines of code
@@ -81,11 +83,11 @@ namespace EqDemo
 						attr.DefaultEditor = new CustomListValueEditor("Lookup", "Lookup");
 					});
 
-					options.UseSqlFormats(FormatType.Sqlite, formats =>
-					{
-						formats.UseDbName = false;
-						formats.UseSchema = false;
-					});
+					//options.UseSqlFormats(FormatType.Sqlite, formats =>
+					//{
+					//	formats.UseDbName = false;
+					//	formats.UseSchema = false;
+					//});
 				});
 
 				endpoints.MapRazorPages();
@@ -100,8 +102,8 @@ namespace EqDemo
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddDbContext<AppDbContext>(
-				options => options.UseSqlite(DbConnectionString)
-			//options => options.UseSqlServer(DbConnectionString);
+			//	options => options.UseSqlite(DbConnectionString)
+			options => options.UseSqlServer(DbConnectionString)
 			);
 
 			services.AddDistributedMemoryCache();
@@ -113,8 +115,8 @@ namespace EqDemo
 					.AddDataExporter<PdfDataExporter>("pdf")
 					.AddDataExporter<ExcelDataExporter>("excel")
 					.UseSessionCache()
-					.RegisterDbGate<Korzh.EasyQuery.DbGates.SqLiteGate>();
-			//.RegisterDbGate<Korzh.EasyQuery.DbGates.SqlServerGate>();
+			//.RegisterDbGate<Korzh.EasyQuery.DbGates.SqLiteGate>();
+			.RegisterDbGate<Korzh.EasyQuery.DbGates.SqlServerGate>();
 
 			services.AddRazorPages();
 
