@@ -34,4 +34,18 @@ namespace EqDemo.Models
 		[ScaffoldColumn(false)]
 		public byte[] Picture { get; set; }
 	}
+
+	public class Category1
+	{
+		public string CategoryName { get; set; }
+
+		public string Description { get; set; }
+
+		[DatabaseGenerated(DatabaseGeneratedOption.None)]
+		[Column("CategoryID")]
+		public int Id { get; set; }
+
+		[ScaffoldColumn(false)]
+		public byte[] Picture { get; set; }
+	}
 }

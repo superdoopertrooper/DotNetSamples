@@ -21,6 +21,8 @@ namespace EqDemo
 		//public DbSet<Asin> Categor1ies { get; set; }
 		public DbSet<Category> Categories { get; set; }
 
+		public DbSet<Category1> Categories1 { get; set; }
+
 		public DbSet<Customer> Customers { get; set; }
 
 		public DbSet<Employee> Employees { get; set; }
