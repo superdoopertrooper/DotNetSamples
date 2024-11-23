@@ -29,7 +29,9 @@ builder.Services.AddEasyQuery()
 		.AddDataExporter<PdfDataExporter>("pdf")
 		.AddDataExporter<ExcelDataExporter>("excel")
 		.UseSessionCache()
-		.RegisterDbGate<Korzh.EasyQuery.DbGates.SqlServerGate>();
+		//.RegisterDbGate<Korzh.EasyQuery.DbGates.SqlServerGate>();
+		.RegisterDbGate<Korzh.EasyQuery.DbGates.SqlServerGate>()
+		.RegisterDbGate<Korzh.EasyQuery.DbGates.OdpCoreGate>();
 
 var app = builder.Build();
 var DbConnectionString = app.Configuration.GetConnectionString("EqDemoDb");
@@ -39,9 +41,13 @@ app.UseEasyQuery(
 	 {
 		 // options.SaveNewQuery = false;
 		 // options.ConnectionString = DbConnectionString;
+		 // options.UseDbConnection<SqlConnection>();
+		 // options.UseDbConnectionModelLoader();
+		 //add dbgate for SQL Server
+
 		 options.UseDbContext<AppDbContext>();
-		 // options.StoreModelInCache = false;
-		 // options.StoreQueryInCache = false;
+		 options.StoreModelInCache = false;
+		 options.StoreQueryInCache = false;
 		 options.UseQueryStore((_) => new FileQueryStore("App_Data"));
 	 }
 
