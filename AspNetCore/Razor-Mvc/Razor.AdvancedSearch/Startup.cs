@@ -1,19 +1,13 @@
+using EasyData;
+using EasyData.Export;
+using Korzh.EasyQuery.Db;
+using Korzh.EasyQuery.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
-using EasyData;
-using EasyData.Export;
-
-using Korzh.EasyQuery.Services;
-using Korzh.EasyQuery.Db;
-
-using EqDemo.Services;
-using Microsoft.Data.Sqlite;
 
 namespace EqDemo
 {
@@ -99,7 +93,7 @@ namespace EqDemo
 			});
 
 			//Init demo database (if necessary)
-			app.EnsureDbInitialized(DbConnectionString, env);
+			//app.EnsureDbInitialized(DbConnectionString, env);
 		}
 
 		// This method gets called by the runtime. Use this method to add services to the container.
