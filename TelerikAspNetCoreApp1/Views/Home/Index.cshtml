@@ -68,7 +68,7 @@
 				<div class="eqv-entities-panel-container">
 					<div id="EntitiesPanel"></div>
 				</div>
-		</div>
+			</div>
 			<div class="eqv-central-block">
 				<div class="eqv-columns-block">
 					<hr class="eqv-columns-hr eqv-hr">
@@ -86,7 +86,7 @@
 					</div>
 				</div>
 
-<
+				<
 			</div>
 			<div class="eqv-menu-block">
 				<hr class="eqv-menu-hr eqv-hr">
@@ -120,10 +120,10 @@
 
 					<div><p></p></div>
 
-					<div class="eqv-dropdown-container"><a class="eqv-button eqv-drop-button">Code samples <span style="float: right">▼</span></a><div class="eqv-dropdown-content"><a>Show aggregation/grouping dialog</a><a>Currency columns to aggregates</a><a>Manage sub and grand totals</a></div></div><select class="eqv-select"><option value="default">EasyGrid</option><option value="ag-grid">AgGrid</option><option value="kendo-grid">Kendo</option></select>
+					<div class="eqv-dropdown-container">
+					</div>
 				</div>
 			</div>
-		</div>
 		</div>
 		<div class="eqv-bottom-panel">
 			<div class="eqv-sql-panel">
@@ -136,115 +136,115 @@
 			</div>
 		</div>
 
-</div>
+	</div>
 
-@section Scripts {
-	<!-- ChartJS script -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js" type="text/javascript"></script>
+	@section Scripts {
+		<!-- ChartJS script -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js" type="text/javascript"></script>
 
-	<!-- Kendo script -->
-	<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+		<!-- Kendo script -->
+		<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 
-	<!--
-		The following Kendo scripts are used for demonstration purposes only
-		(to show how you can use a third-party grid with EasyQuery).
-		They are not necessary in general cases.
-	-->
-	<script src="https://kendo.cdn.telerik.com/2021.1.119/js/kendo.all.min.js"></script>
-	<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.1.119/styles/kendo.default-v2.min.css" />
+		<!--
+			The following Kendo scripts are used for demonstration purposes only
+			(to show how you can use a third-party grid with EasyQuery).
+			They are not necessary in general cases.
+		-->
+		<script src="https://kendo.cdn.telerik.com/2021.1.119/js/kendo.all.min.js"></script>
+		<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.1.119/styles/kendo.default-v2.min.css" />
 
-	<!-- EasyQuery scripts -->
-	<script src="https://cdn.korzh.com/eq/7.3.3/eq.enterprise.min.js"></script>
+		<!-- EasyQuery scripts -->
+		<script src="https://cdn.korzh.com/eq/7.3.3/eq.enterprise.min.js"></script>
 
-	<!-- Examples of custom GRID integration -->
-	<script src="~/js/kendo-grid-widget.js"></script>
-	<script src="~/js/ag-grid-widget.js"></script>
+		<!-- Examples of custom GRID integration -->
+		<script src="~/js/kendo-grid-widget.js"></script>
+		<script src="~/js/ag-grid-widget.js"></script>
 
-	<!-- Useful code samples -->
-	<script src="~/js/samples/convert-columns-to-aggr.js"></script>
-	<script src="~/js/samples/manage-subtotals.js"></script>
+		<!-- Useful code samples -->
+		<script src="~/js/samples/convert-columns-to-aggr.js"></script>
+		<script src="~/js/samples/manage-subtotals.js"></script>
 
-	<!-- Sample selectors logic -->
-	<script src="~/js/sample-selectors.js"></script>
+		<!-- Sample selectors logic -->
+		<script src="~/js/sample-selectors.js"></script>
 
-	<!-- EasyQuery Advanced Search view initialization -->
-	<script>
+		<!-- EasyQuery Advanced Search view initialization -->
+		<script>
 
-		window.addEventListener('load', function () {
+			window.addEventListener('load', function () {
 
-			//Options for AdvancedSearchViewJQuery
-			var viewOptions = {
+				//Options for AdvancedSearchViewJQuery
+				var viewOptions = {
 
-				//Load model on start
-				loadModelOnStart: true,
+					//Load model on start
+					loadModelOnStart: true,
 
-				//Load query on start
-				loadQueryOnStart: false,
+					//Load query on start
+					loadQueryOnStart: false,
 
-				enableExport: true,
-				serverExporters: ['pdf', 'excel', 'csv'],
+					enableExport: true,
+					serverExporters: ['pdf', 'excel', 'csv'],
 
-				//locale: 'en-US',
-				localeSettings: {
-					shortDateFormat: 'yyyy-MM-dd',
-				},
-
-				//Handlers
-				handlers: {
-					afterFetchData: function(context) {
-						//console.log("After Fetch");
+					//locale: 'en-US',
+					localeSettings: {
+						shortDateFormat: 'yyyy-MM-dd',
 					},
-					//Error handler
-					onError: function (_, error) {
-						console.error(error.sourceError);
+
+					//Handlers
+					handlers: {
+						afterFetchData: function(context) {
+							//console.log("After Fetch");
+						},
+						//Error handler
+						onError: function (_, error) {
+							console.error(error.sourceError);
+						},
+						onListRequest: function (params, onResult) {
+							console.log('Inside list request handler');
+							var processed = true;
+							const listName = params.listName;
+							if (listName.startsWith("Lookup")) {
+								console.log('Looking for list: ', listName);
+								const type = listName.split(' ')[1];
+								const list = [];
+								getLookupList(type, onResult);
+							} else {
+								processed = false;
+							}
+							return processed;
+						},
 					},
-					onListRequest: function (params, onResult) {
-						console.log('Inside list request handler');
-						var processed = true;
-						const listName = params.listName;
-						if (listName.startsWith("Lookup")) {
-							console.log('Looking for list: ', listName);
-							const type = listName.split(' ')[1];
-							const list = [];
-							getLookupList(type, onResult);
-						} else {
-							processed = false;
+					result: {
+						//Show EasyChart
+						showChart: true,
+						paging: {
+							pageSize: 30
 						}
-						return processed;
-					},
-				},
-				result: {
-					//Show EasyChart
-					showChart: true,
-					paging: {
-						pageSize: 30
 					}
-				}
-			};
+				};
 
-			configureOptionsForSelectedGrid(viewOptions);
+				configureOptionsForSelectedGrid(viewOptions);
 
-			var view = new easyquery.ui.AdvancedSearchView();
-			var context = view.getContext();
-			context.useEnterprise(function () {
-				view.init(viewOptions);
+				var view = new easyquery.ui.AdvancedSearchView();
+				var context = view.getContext();
+				context.useEnterprise(function () {
+					view.init(viewOptions);
+				});
+
+				document['AdvancedSearchView'] = view;
 			});
 
-			document['AdvancedSearchView'] = view;
-		});
+			function getLookupList(type, onSuccess) {
+				$.ajax({
+					dataType: 'json',
+					url: '/api/values/list1',
+					success: function (data) {
+						onSuccess(data);
+					},
 
-		function getLookupList(type, onSuccess) {
-			$.ajax({
-				dataType: 'json',
-				url: '/api/values/list1',
-				success: function (data) {
-					onSuccess(data);
-				},
-
-				error: function (jqXHR, textStatus, errorThrown) {
-					alert('ERROR: ' + textStatus + ' ' + errorThrown);
-				}
-			});
-		}
-	</script>
-}
+					error: function (jqXHR, textStatus, errorThrown) {
+						alert('ERROR: ' + textStatus + ' ' + errorThrown);
+					}
+				});
+			}
+		</script>
+	}
